@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,10 +10,27 @@ const Home = () => {
   const {allProducts,loading,errorMsg} = useSelector(state=>state.productReducer)
   console.log(allProducts,loading,errorMsg);
   
+  const[currentPage,setCurrentPage] = useState(1)
+  const productsPerPage =8
+  const totalPage = Math.ceil(allProducts?.length/productsPerPage)
+  const currentPageProductLastIndex = currentPage * productsPerPage
+  const curretPageProductFirstIndex = currentPageProductLastIndex- productsPerPage
+  
 
   useEffect(()=>{
     dispatch(fetchProducts())
   },[])
+
+  const navigateToNext =()=>{
+    if(currentPage!=totalPage){
+      setCurrentPage(currentPage+1)
+    }
+  }
+  const navigateToBack =()=>{
+    if(currentPage!=1){
+      setCurrentPage(currentPage-1)
+    }
+  }
   return (
     <>
  <Header insideHome={true}/>
@@ -41,7 +58,15 @@ const Home = () => {
         <div className='flex justify-center items-center font-bold text-red-600 my-5 text-lg'>products not found</div>
       }
     </div>
+    
     )}
+    <div className='text-2xl text-center font-bold mt-20'>
+      <span onClick={navigateToBack}  className='cursor-pointer'> <i  className='fa-solid fa-backward me-5'></i></span>
+      <span >{currentPage} of {totalPage}</span>
+            <span onClick={navigateToNext} className='cursor-pointer'> <i className='fa-solid fa-forward me-5'></i></span>
+
+
+    </div>
  </div>
 
     </>
